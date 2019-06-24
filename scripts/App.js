@@ -19,15 +19,12 @@ function createCell(row, i, j) {
     let cell = document.createElement('div');
     cell.className = 'cell';
     cell.id = `cell_${i}${j}`;
-    document.querySelector('.container').appendChild(cell);
+    document.querySelector('#ship-board').appendChild(cell);
     cell.addEventListener("click", activateCell);
 }
 
 function activateCell() {
-    if(!document.querySelector('.active')) {
-       this.classList.add('active');
-       getStartingPosition(this.id);
-    }
+    this.classList.add('active');
 }
 
 function main() {
