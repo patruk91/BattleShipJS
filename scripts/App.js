@@ -51,62 +51,63 @@ function activateCell() {
     this.classList.add('active');
 }
 
-function createGame(gameCollection, userId, dbRef) {
-    gameCollection.add({
-        player1: userId,
-        player2: '',
-        sequence: userId,
-        status: 'open'
-    }).then(docRef => {
-        dbRef.collection('users').doc(userId).update({
-            inGame: docRef.id
-        })
-    })
-}
 
-function addPlayer(gameCollection, docOfAllActiveGames, userId) {
-    const firstActiveGame = docOfAllActiveGames[0];
-    gameCollection.doc(firstActiveGame.id).update({
-        player2: userId,
-        status: 'close'
-    });
-}
+function main() {
+    let userId = '';
+    const dbRef = firebase.firestore();
+    let gameId = '';
 
-function userSignIn() {
     window.addEventListener("beforeunload", e => {
         firebase.auth().signInAnonymously();
     });
-}
 
-function main() {
-    userSignIn();
-    let userId = "";
-    const dbRef = firebase.firestore();
-    createGrid();
+    firebase.auth().onAuthStateChanged(firebaseUser => {
+        userId = firebaseUser.uid;
 
-
-    firebase.auth().onAuthStateChanged(user => {
-        userId = user.uid;
         dbRef.collection('users').doc(userId).set({
             inGame: "",
         })
     });
 
-
-    const gameCollection = dbRef.collection('games');
-    gameCollection.where('status', '==', 'open').get().then(snapshot => {
-        const docOfAllActiveGames = snapshot.docs;
-        if(docOfAllActiveGames.length !== 0) {
-            addPlayer(gameCollection, docOfAllActiveGames, userId);
-            dbRef.collection('users').doc(userId).update({
-                inGame: snapshot.docs[0].id
-            })
+    dbRef.collection('games').where('status', '==', 'open').get().then(snapshot => {
+        if(snapshot.docs.length !== 0) {
+            dbRef.collection('games').doc(snapshot.docs[0].id).update({
+                player2: userId,
+                status: 'close'
+            }).then(() => {
+                dbRef.collection('users').doc(userId).update({
+                    inGame: snapshot.docs[0].id
+                });
+            }).then(() => {
+                dbRef.collection('users').doc(userId).get().then(gameName => {
+                    gameId = gameName.data().inGame;
+                }).then(() => {
+                    dbRef.collection('games').doc(gameId).onSnapshot(function(doc) {
+                        console.log("Current data: ", doc.data());
+                    });
+                });
+            });
         } else {
-            createGame(gameCollection, userId, dbRef);
+            dbRef.collection('games').add({
+                player1: userId,
+                player2: '',
+                sequence: userId,
+                status: 'open'
+            }).then(docRef => {
+                dbRef.collection('users').doc(userId).update({
+                    inGame: docRef.id
+                });
+            }).then(() => {
+                dbRef.collection('users').doc(userId).get().then(gameName => {
+                    gameId = gameName.data().inGame;
+                }).then(() => {
+                    dbRef.collection('games').doc(gameId).onSnapshot(function(doc) {
+                        console.log("Current data: ", doc.data());
+                    });
+                });
+            });
         }
-    });
-
-
+    })
 }
 
 main();
