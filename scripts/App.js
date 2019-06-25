@@ -8,10 +8,17 @@ function createGrid() {
 
 function addCellToRow(i) {
     let row = [];
+    const rowCells = document.createElement("div");
+    rowCells.className = "row";
+    const board = document.querySelector(".grid");
+
     for (let j = 0; j < 10; j++) {
-        createCell(row, i, j);
+        let cell = createCell(row, i, j);
+        rowCells.appendChild(cell);
     }
+    board.appendChild(rowCells);
     grid.push(row);
+
 }
 
 function createCell(row, i, j) {
@@ -21,6 +28,7 @@ function createCell(row, i, j) {
     cell.id = `cell_${i}${j}`;
     document.querySelector('#ship-board').appendChild(cell);
     cell.addEventListener("click", activateCell);
+    return cell;
 }
 
 function activateCell() {

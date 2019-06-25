@@ -1,23 +1,42 @@
 .container {
     display: flex;
-    flex-direction: row; 
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 .grid {
     height: 500px;
-    margin: 50px auto;
+    margin: 50px 50px;
     width: 500px;
+    border: black 2px solid;
   }
-  
-  .cell {
-    background-color: #2980b9;
-    background-size: contain;
-    border: 1px solid white;
-    box-sizing: border-box;
-    float: left;
-    height: 10%;
-    width: 10%;
-  }
-  
-  .active {
+
+.row {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+
+    display: flex;
+    -webkit-flex-flow: row;
+    justify-content: space-around;
+
+}
+.cell {
+    background: #2980b9;
+    margin: 1px;
+    color: white;
+    font-weight: bold;
+    font-size: 1.5em;
+    text-align: center;
+    flex: 1 0 auto;
+    height:auto;
+}
+.cell:before {
+    content:'';
+    float:left;
+    padding-top:100%;
+}
+
+.active {
     background-color: #e67e22;
-  }
+}
