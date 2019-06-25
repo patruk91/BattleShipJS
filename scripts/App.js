@@ -51,17 +51,21 @@ function activateCell() {
     this.classList.add('active');
 }
 
-function createGame(gameCollection, userId) {
+function createGame(gameCollection, userId, dbRef) {
     gameCollection.add({
         player1: userId,
         player2: '',
         sequence: userId,
         status: 'open'
+    }).then(docRef => {
+        dbRef.collection('users').doc(userId).update({
+            inGame: docRef.id
+        })
     })
 }
 
 function addPlayer(gameCollection, docOfAllActiveGames, userId) {
-    const firstActiveGame = docOfAllActiveGames[0]
+    const firstActiveGame = docOfAllActiveGames[0];
     gameCollection.doc(firstActiveGame.id).update({
         player2: userId,
         status: 'close'
@@ -73,7 +77,6 @@ function userSignIn() {
         firebase.auth().signInAnonymously();
     });
 }
-var userId = firebase.auth().currentUser;
 
 function main() {
     userSignIn();
@@ -84,6 +87,9 @@ function main() {
 
     firebase.auth().onAuthStateChanged(user => {
         userId = user.uid;
+        dbRef.collection('users').doc(userId).set({
+            inGame: "",
+        })
     });
 
 
@@ -92,10 +98,12 @@ function main() {
         const docOfAllActiveGames = snapshot.docs;
         if(docOfAllActiveGames.length !== 0) {
             addPlayer(gameCollection, docOfAllActiveGames, userId);
+            dbRef.collection('users').doc(userId).update({
+                inGame: snapshot.docs[0].id
+            })
         } else {
-            createGame(gameCollection, userId);
+            createGame(gameCollection, userId, dbRef);
         }
-
     })
 
 }
