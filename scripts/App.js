@@ -1,5 +1,5 @@
-const grid = [];
-const ships = {
+let grid = [];
+let ships = {
     carrier: [],
     battleship: [],
     cruiser: [],
@@ -36,7 +36,7 @@ function createCell(row, i, j) {
             y: j
         },
         contain: 'ocean'
-    }
+    };
 
     row.push(cellObject);
     let cell = document.createElement('div');
@@ -51,8 +51,53 @@ function activateCell() {
     this.classList.add('active');
 }
 
+function createGame(gameCollection, userId) {
+    gameCollection.add({
+        player1: userId,
+        player2: '',
+        sequence: userId,
+        status: 'open'
+    })
+}
+
+function addPlayer(gameCollection, docOfAllActiveGames, userId) {
+    const firstActiveGame = docOfAllActiveGames[0]
+    gameCollection.doc(firstActiveGame.id).update({
+        player2: userId,
+        status: 'close'
+    });
+}
+
+function userSignIn() {
+    window.addEventListener("beforeunload", e => {
+        firebase.auth().signInAnonymously();
+    });
+}
+var userId = firebase.auth().currentUser;
+
 function main() {
+    userSignIn();
+    let userId = "";
+    const dbRef = firebase.firestore();
     createGrid();
+
+
+    firebase.auth().onAuthStateChanged(user => {
+        userId = user.uid;
+    });
+
+
+    const gameCollection = dbRef.collection('games');
+    gameCollection.where('status', '==', 'open').get().then(snapshot => {
+        const docOfAllActiveGames = snapshot.docs;
+        if(docOfAllActiveGames.length !== 0) {
+            addPlayer(gameCollection, docOfAllActiveGames, userId);
+        } else {
+            createGame(gameCollection, userId);
+        }
+
+    })
+
 }
 
 main();
