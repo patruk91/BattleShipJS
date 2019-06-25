@@ -1,4 +1,11 @@
 const grid = [];
+const ships = {
+    carrier: [],
+    battleship: [],
+    cruiser: [],
+    submarine: [],
+    destroyer: []
+};
 
 function createGrid() {
     for(let i = 0; i < 10; i++) {
@@ -22,7 +29,16 @@ function addCellToRow(i) {
 }
 
 function createCell(row, i, j) {
-    row.push(`cell_${i}${j}`);
+    const cellObject = {
+        id: `cell_${i}${j}`,
+        position: {
+            x: i,
+            y: j
+        },
+        contain: 'ocean'
+    }
+
+    row.push(cellObject);
     let cell = document.createElement('div');
     cell.className = 'cell';
     cell.id = `cell_${i}${j}`;
