@@ -11,7 +11,53 @@ function createGrid() {
     for(let i = 0; i < 10; i++) {
         addCellToRow(i);
     }
+    addShips();
+}
 
+function addShips() {
+    //carrier
+    grid[0][0].cell = 'carrier';
+    document.querySelector('#cell_00').classList.add('carrier');
+    grid[1][0].cell = 'carrier';
+    document.querySelector('#cell_10').classList.add('carrier');
+    grid[2][0].cell = 'carrier';
+    document.querySelector('#cell_20').classList.add('carrier');
+    grid[3][0].cell = 'carrier';
+    document.querySelector('#cell_30').classList.add('carrier');
+    grid[4][0].cell = 'carrier';
+    document.querySelector('#cell_40').classList.add('carrier');
+
+    //battleship
+    grid[2][4].cell = 'battleship';
+    document.querySelector('#cell_24').classList.add('battleship');
+    grid[2][5].cell = 'battleship';
+    document.querySelector('#cell_25').classList.add('battleship');
+    grid[2][6].cell = 'battleship';
+    document.querySelector('#cell_26').classList.add('battleship');
+    grid[2][7].cell = 'battleship';
+    document.querySelector('#cell_27').classList.add('battleship');
+
+    //cruiser
+    grid[6][2].cell = 'cruiser';
+    document.querySelector('#cell_62').classList.add('cruiser');
+    grid[7][2].cell = 'cruiser';
+    document.querySelector('#cell_72').classList.add('cruiser');
+    grid[8][2].cell = 'cruiser';
+    document.querySelector('#cell_82').classList.add('cruiser');
+
+    //submarine
+    grid[5][6].cell = 'submarine';
+    document.querySelector('#cell_56').classList.add('submarine');
+    grid[5][7].cell = 'submarine';
+    document.querySelector('#cell_57').classList.add('submarine');
+    grid[5][8].cell = 'submarine';
+    document.querySelector('#cell_58').classList.add('submarine');
+
+    //destroyer
+    grid[8][9].cell = 'destroyer';
+    document.querySelector('#cell_89').classList.add('destroyer');
+    grid[9][9].cell = 'destroyer';
+    document.querySelector('#cell_99').classList.add('destroyer');
 }
 
 function addCellToRow(i) {

@@ -54,3 +54,23 @@
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+
+.carrier {
+    background-color: red;
+}
+
+.battleship {
+    background-color: green;
+}
+
+.cruiser {
+    background-color: yellow;
+}
+
+.submarine {
+    background-color: purple;
+}
+
+.destroyer {
+    background-color: silver;
+}
