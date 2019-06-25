@@ -53,6 +53,7 @@ function activateCell() {
 
 
 function main() {
+    const loaderSpin = document.querySelector("#loader");
     let userId = '';
     const dbRef = firebase.firestore();
     let gameId = '';
@@ -85,12 +86,14 @@ function main() {
                     dbRef.collection('games').doc(gameId).onSnapshot(function(doc) {
                         if(doc.data().status === 'close') {
                             console.log('Start Game');
+                            startGame();
                         }
                     });
                 });
             });
         } else {
-            dbRef.collection('games').add({
+            loaderSpin.className = "loader";
+                dbRef.collection('games').add({
                 player1: userId,
                 player2: '',
                 sequence: userId,
@@ -105,7 +108,9 @@ function main() {
                 }).then(() => {
                     dbRef.collection('games').doc(gameId).onSnapshot(function(doc) {
                         if(doc.data().status === 'close') {
+                            loaderSpin.className = "";
                             console.log('Start Game');
+                            startGame();
                         }
                     });
                 });
