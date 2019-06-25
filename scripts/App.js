@@ -83,7 +83,9 @@ function main() {
                     gameId = gameName.data().inGame;
                 }).then(() => {
                     dbRef.collection('games').doc(gameId).onSnapshot(function(doc) {
-                        console.log("Current data: ", doc.data());
+                        if(doc.data().status === 'close') {
+                            console.log('Start Game');
+                        }
                     });
                 });
             });
@@ -102,7 +104,9 @@ function main() {
                     gameId = gameName.data().inGame;
                 }).then(() => {
                     dbRef.collection('games').doc(gameId).onSnapshot(function(doc) {
-                        console.log("Current data: ", doc.data());
+                        if(doc.data().status === 'close') {
+                            console.log('Start Game');
+                        }
                     });
                 });
             });
