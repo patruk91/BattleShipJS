@@ -11,6 +11,7 @@ function createGrid() {
     for(let i = 0; i < 10; i++) {
         addCellToRow(i);
     }
+
 }
 
 function addCellToRow(i) {
@@ -43,7 +44,7 @@ function createCell(row, i, j) {
     cell.className = 'cell';
     cell.id = `cell_${i}${j}`;
     document.querySelector('#ship-board').appendChild(cell);
-    cell.addEventListener("click", activateCell);
+    // cell.addEventListener("click", activateCell);
     return cell;
 }
 
@@ -52,7 +53,15 @@ function activateCell() {
 }
 
 
+function startGame() {
+    createGrid();
+
+}
+
 function main() {
+    const loaderSpin = document.querySelector("#loader");
+    const loaderh2 = document.querySelector("#loaderh2");
+
     let userId = '';
     const dbRef = firebase.firestore();
     let gameId = '';
@@ -85,12 +94,14 @@ function main() {
                     dbRef.collection('games').doc(gameId).onSnapshot(function(doc) {
                         if(doc.data().status === 'close') {
                             console.log('Start Game');
+                            startGame(userId);
                         }
                     });
                 });
             });
         } else {
-            dbRef.collection('games').add({
+            loaderSpin.className = "loader";
+                dbRef.collection('games').add({
                 player1: userId,
                 player2: '',
                 sequence: userId,
@@ -105,7 +116,10 @@ function main() {
                 }).then(() => {
                     dbRef.collection('games').doc(gameId).onSnapshot(function(doc) {
                         if(doc.data().status === 'close') {
+                            loaderSpin.style.display = "none";
+                            loaderh2.remove();
                             console.log('Start Game');
+                            startGame();
                         }
                     });
                 });
