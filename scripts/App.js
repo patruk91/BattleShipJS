@@ -104,7 +104,8 @@ function main() {
         } else {
             createGame(gameCollection, userId, dbRef);
         }
-    })
+    });
+
 
 }
 
