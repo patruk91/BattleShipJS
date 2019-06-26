@@ -1,3 +1,7 @@
+let userId = '';
+const dbRef = firebase.firestore();
+let gameId = '';
+
 let shipsGrid = [];
 let shootsGrid = [];
 let ships = {
@@ -124,13 +128,15 @@ function startGame() {
     addShips();
     createGrid("shoot-board");
     createShootObject();
+    console.log(userId);
     
-    let listener = dbRef.collection('games').doc(gameId).onSnapshot(function(doc) {
+    let gameControlListener = dbRef.collection('games').doc(gameId).onSnapshot(function(doc) {
         if(doc.data().sequence === userId && doc.data().phase == 'shoot') {
-            console.log('Start Game');
-            loaderSpin.style.display = "none";
-            loaderH2.remove();
-            startGame(listener());
+            console.log('Phase shoot: Change phase to test-shoot');
+        } else if(doc.data().sequence !== userId && doc.data().phase == 'test-shoot') {
+            console.log("phase test-shoot: change phase to mark");
+        } else if(doc.data().sequence === userId && doc.data().phase == 'mark') {
+            console.log("phase mark: change sequence to player 2, change phase to shoot");
         }
     });
 }
@@ -138,11 +144,6 @@ function startGame() {
 function main() {
     const loaderSpin = document.querySelector("#loader");
     const loaderH2 = document.querySelector("#loaderh2");
-
-
-    let userId = '';
-    const dbRef = firebase.firestore();
-    let gameId = '';
 
     window.addEventListener("beforeunload", e => {
         firebase.auth().signInAnonymously();
