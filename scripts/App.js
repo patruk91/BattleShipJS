@@ -127,6 +127,10 @@ function shoot() {
 }
 
 
+function showGameOverScreen() {
+    alert("Game Over");
+}
+
 function startGame() {
     createGrid("ship-board");
     createCellObject();
@@ -156,6 +160,7 @@ function startGame() {
                 ships[shipCellContain].pop();
                 if (ships.areAllShipSunk() == 0) {
                     isGameOver = true;
+                    showGameOverScreen();
                 }
             }
             dbRef.collection('games').doc(gameId).update({
