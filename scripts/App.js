@@ -166,10 +166,11 @@ function startGame() {
                 phase: "mark",
                 shootGrid: JSON.stringify(shootsGrid),
                 gameEnd: isGameOver
+            }).then(() => {
+                if(isGameOver) {
+                    showGameOverScreen();
+                }
             });
-            if(isGameOver) {
-                showGameOverScreen();
-            }
         } else if(doc.data().sequence === userId && doc.data().phase === 'mark') {
             let player2Id = getPlayer2Id(doc);
             console.log("phase mark: change sequence to player 2, change phase to shoot");             //////TODO: remove
@@ -189,9 +190,8 @@ function startGame() {
 }
 
 function renderShootsGrid(shootObject) {
-    console.log(shootObject);
     Object.keys(shootObject).forEach(function(cellId) {
-        document.querySelector(`#shoot-board #${cellId}`).classList.add(shootsGrid[cellId].contain);
+        document.querySelector(`#shoot-board #${cellId}`).classList.add(shootObject[cellId].contain);
     });
 }
 
