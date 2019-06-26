@@ -1,3 +1,21 @@
+let userId = '';
+const dbRef = firebase.firestore();
+let gameId = '';
+x = {
+    aInternal: 0,
+    aListener: function(val) {},
+    set a(val) {
+      this.aInternal = val;
+      this.aListener(val);
+    },
+    get a() {
+      return this.aInternal;
+    },
+    registerListener: function(listener) {
+      this.aListener = listener;
+    }
+}
+
 let shipsGrid = [];
 let shootsGrid = [];
 let ships = {
@@ -92,15 +110,13 @@ function createCellObject() {
 
 function createShootObject() {
     for(let i = 0; i < 10; i++) {
-        let row = [];
         for (let j = 0; j < 10; j++) {
             const cellObject = {
                 id: `cell_${i}${j}`,
                 contain: 'ocean'
             };
-            row.push(cellObject);
+            shootsGrid.push(cellObject);
         }
-        shootsGrid.push(row);
     }
 }
 
@@ -109,12 +125,12 @@ function createCell(i, j, boardId) {
     cell.className = 'ocean';
     cell.id = `cell_${i}${j}`;
     document.querySelector(`#${boardId}`).appendChild(cell);
-    cell.addEventListener("click", activateCell);
+    cell.addEventListener("click", shoot);
     return cell;
 }
 
-function activateCell() {
-    this.classList.add('active');
+function shoot() {
+    x.a = shootsGrid.find(x => x.id === this.id);
 }
 
 
@@ -124,18 +140,28 @@ function startGame() {
     addShips();
     createGrid("shoot-board");
     createShootObject();
-
-
+    
+    let gameControlListener = dbRef.collection('games').doc(gameId).onSnapshot(function(doc) {
+        if(doc.data().sequence === userId && doc.data().phase == 'shoot') {
+            // console.log('Phase shoot: Change phase to test-shoot');
+            x.registerListener(function(val) {
+                dbRef.collection('games').doc(gameId).update({
+                    coordinates: val.id,
+                    phase: "test-shoot"
+                });
+              });
+                            
+        } else if(doc.data().sequence !== userId && doc.data().phase == 'test-shoot') {
+            console.log("phase test-shoot: change phase to mark");
+        } else if(doc.data().sequence === userId && doc.data().phase == 'mark') {
+            console.log("phase mark: change sequence to player 2, change phase to shoot");
+        }
+    });
 }
 
 function main() {
     const loaderSpin = document.querySelector("#loader");
     const loaderH2 = document.querySelector("#loaderh2");
-
-
-    let userId = '';
-    const dbRef = firebase.firestore();
-    let gameId = '';
 
     window.addEventListener("beforeunload", e => {
         firebase.auth().signInAnonymously();
@@ -178,6 +204,10 @@ function main() {
                 player1: userId,
                 player2: '',
                 sequence: userId,
+                phase: 'shoot',
+                coordinates: '',
+                shootGrid: '',
+                gameEnd: false,
                 status: 'open'
             }).then(docRef => {
                 dbRef.collection('users').doc(userId).update({
