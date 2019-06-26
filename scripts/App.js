@@ -182,7 +182,7 @@ function startGame() {
             console.log("phase mark: change sequence to player 2, change phase to shoot");             //////TODO: remove
             renderShootsGrid(JSON.parse(doc.data().shootGrid));
             if(doc.data().gameEnd == true) {
-                showGameOverScreen();
+                showGameOverScreen(doc.data().sequence);
             } else {
                 dbRef.collection('games').doc(gameId).update({
                     phase: "shoot",
