@@ -14,16 +14,19 @@ x = {
     registerListener: function(listener) {
       this.aListener = listener;
     }
-}
+};
 
-let shipsGrid = [];
-let shootsGrid = [];
+let shipsGrid = {};
+let shootsGrid = {};
 let ships = {
-    carrier: [],
-    battleship: [],
-    cruiser: [],
-    submarine: [],
-    destroyer: []
+    carrier: [1 ,1 ,1 ,1 ,1],
+    battleship: [1 ,1 ,1 ,1],
+    cruiser: [1 ,1 ,1],
+    submarine: [1 ,1 ,1],
+    destroyer: [1 ,1],
+    areAllShipSunk: function () {
+        return this.carrier.length + this.battleship.length + this.cruiser.length + this.submarine.length + this.destroyer;
+    }
 };
 
 function createGrid(boardId) {
@@ -34,47 +37,47 @@ function createGrid(boardId) {
 
 function addShips() {
     //carrier
-    shipsGrid[0][0].contain = 'carrier';
+    shipsGrid["cell_00"].contain = 'carrier';
     document.querySelector('#cell_00').classList.add('carrier');
-    shipsGrid[1][0].contain = 'carrier';
+    shipsGrid["cell_10"].contain = 'carrier';
     document.querySelector('#cell_10').classList.add('carrier');
-    shipsGrid[2][0].contain = 'carrier';
+    shipsGrid["cell_20"].contain = 'carrier';
     document.querySelector('#cell_20').classList.add('carrier');
-    shipsGrid[3][0].contain = 'carrier';
+    shipsGrid["cell_30"].contain = 'carrier';
     document.querySelector('#cell_30').classList.add('carrier');
-    shipsGrid[4][0].contain = 'carrier';
+    shipsGrid["cell_40"].contain = 'carrier';
     document.querySelector('#cell_40').classList.add('carrier');
 
     //battleship
-    shipsGrid[2][4].contain = 'battleship';
+    shipsGrid["cell_24"].contain = 'battleship';
     document.querySelector('#cell_24').classList.add('battleship');
-    shipsGrid[2][5].contain = 'battleship';
+    shipsGrid["cell_25"].contain = 'battleship';
     document.querySelector('#cell_25').classList.add('battleship');
-    shipsGrid[2][6].contain = 'battleship';
+    shipsGrid["cell_26"].contain = 'battleship';
     document.querySelector('#cell_26').classList.add('battleship');
-    shipsGrid[2][7].contain = 'battleship';
+    shipsGrid["cell_27"].contain = 'battleship';
     document.querySelector('#cell_27').classList.add('battleship');
 
     //cruiser
-    shipsGrid[6][2].contain = 'cruiser';
+    shipsGrid["cell_62"].contain = 'cruiser';
     document.querySelector('#cell_62').classList.add('cruiser');
-    shipsGrid[7][2].contain = 'cruiser';
+    shipsGrid["cell_72"].contain = 'cruiser';
     document.querySelector('#cell_72').classList.add('cruiser');
-    shipsGrid[8][2].contain = 'cruiser';
+    shipsGrid["cell_82"].contain = 'cruiser';
     document.querySelector('#cell_82').classList.add('cruiser');
 
     //submarine
-    shipsGrid[5][6].contain = 'submarine';
+    shipsGrid["cell_56"].contain = 'submarine';
     document.querySelector('#cell_56').classList.add('submarine');
-    shipsGrid[5][7].contain = 'submarine';
+    shipsGrid["cell_57"].contain = 'submarine';
     document.querySelector('#cell_57').classList.add('submarine');
-    shipsGrid[5][8].contain = 'submarine';
+    shipsGrid["cell_58"].contain = 'submarine';
     document.querySelector('#cell_58').classList.add('submarine');
 
     //destroyer
-    shipsGrid[8][9].contain = 'destroyer';
+    shipsGrid["cell_89"].contain = 'destroyer';
     document.querySelector('#cell_89').classList.add('destroyer');
-    shipsGrid[9][9].contain = 'destroyer';
+    shipsGrid["cell_99"].contain = 'destroyer';
     document.querySelector('#cell_99').classList.add('destroyer');
 }
 
@@ -92,30 +95,20 @@ function addCellToRow(i, boardId) {
 
 function createCellObject() {
     for(let i = 0; i < 10; i++) {
-        let row = [];
         for (let j = 0; j < 10; j++) {
-            const cellObject = {
-                id: `cell_${i}${j}`,
-                position: {
-                    x: i,
-                    y: j
-                },
+            shipsGrid[`cell_${i}${j}`] = {
                 contain: 'ocean'
             };
-            row.push(cellObject);
         }
-        shipsGrid.push(row);
     }
 }
 
 function createShootObject() {
     for(let i = 0; i < 10; i++) {
         for (let j = 0; j < 10; j++) {
-            const cellObject = {
-                id: `cell_${i}${j}`,
+            shootsGrid[`cell_${i}${j}`] = {
                 contain: 'ocean'
             };
-            shootsGrid.push(cellObject);
         }
     }
 }
@@ -134,6 +127,10 @@ function shoot() {
 }
 
 
+function showGameOverScreen() {
+    alert("Game Over");
+}
+
 function startGame() {
     createGrid("ship-board");
     createCellObject();
@@ -142,7 +139,7 @@ function startGame() {
     createShootObject();
     
     let gameControlListener = dbRef.collection('games').doc(gameId).onSnapshot(function(doc) {
-        if(doc.data().sequence === userId && doc.data().phase == 'shoot') {
+        if(doc.data().sequence === userId && doc.data().phase === 'shoot') {
             // console.log('Phase shoot: Change phase to test-shoot');
             x.registerListener(function(val) {
                 dbRef.collection('games').doc(gameId).update({
@@ -151,9 +148,28 @@ function startGame() {
                 });
               });
                             
-        } else if(doc.data().sequence !== userId && doc.data().phase == 'test-shoot') {
+        } else if(doc.data().sequence !== userId && doc.data().phase === 'test-shoot') {
             console.log("phase test-shoot: change phase to mark");
-        } else if(doc.data().sequence === userId && doc.data().phase == 'mark') {
+            let isGameOver = false;
+            let coordinates = doc.data().coordinates;
+            let shipCellContain = shipsGrid[coordinates].contain;
+            if (shipCellContain === "ocean") {
+                shootsGrid[coordinates].contain = "miss";
+            } else {
+                shootsGrid[coordinates].contain = shipCellContain;
+                ships[shipCellContain].pop();
+                if (ships.areAllShipSunk() == 0) {
+                    isGameOver = true;
+                    showGameOverScreen();
+                }
+            }
+            dbRef.collection('games').doc(gameId).update({
+                phase: "mark",
+                shootGrid: JSON.stringify(shootsGrid),
+                gameEnd: isGameOver
+            });
+
+        } else if(doc.data().sequence === userId && doc.data().phase === 'mark') {
             console.log("phase mark: change sequence to player 2, change phase to shoot");
         }
     });
