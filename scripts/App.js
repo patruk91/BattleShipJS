@@ -140,7 +140,7 @@ function startGame() {
     
     let gameControlListener = dbRef.collection('games').doc(gameId).onSnapshot(function(doc) {
         if(doc.data().sequence === userId && doc.data().phase === 'shoot') {
-            console.log('Phase shoot: Change phase to test-shoot');
+            console.log('Phase shoot: Change phase to test-shoot');             //////TODO: remove
             x.registerListener(function(val) {
                 dbRef.collection('games').doc(gameId).update({
                     coordinates: val,
@@ -149,7 +149,7 @@ function startGame() {
               });
                             
         } else if(doc.data().sequence !== userId && doc.data().phase === 'test-shoot') {
-            console.log("phase test-shoot: change phase to mark");
+            console.log("phase test-shoot: change phase to mark");             //////TODO: remove
             let isGameOver = false;
             let coordinates = doc.data().coordinates;
             let shipCellContain = shipsGrid[coordinates].contain;
@@ -160,19 +160,46 @@ function startGame() {
                 ships[shipCellContain].pop();
                 if (ships.areAllShipSunk() == 0) {
                     isGameOver = true;
-                    showGameOverScreen();
                 }
             }
             dbRef.collection('games').doc(gameId).update({
                 phase: "mark",
                 shootGrid: JSON.stringify(shootsGrid),
                 gameEnd: isGameOver
+            }).then(() => {
+                if(isGameOver) {
+                    showGameOverScreen();
+                }
             });
-
         } else if(doc.data().sequence === userId && doc.data().phase === 'mark') {
-            console.log("phase mark: change sequence to player 2, change phase to shoot");
+            let player2Id = getPlayer2Id(doc);
+            console.log("phase mark: change sequence to player 2, change phase to shoot");             //////TODO: remove
+            renderShootsGrid(JSON.parse(doc.data().shootGrid));
+            if(doc.data().gameEnd == true) {
+                showGameOverScreen();
+            } else {
+                dbRef.collection('games').doc(gameId).update({
+                    phase: "shoot",
+                    coordinates: '',
+                    shootGrid: '',
+                    sequence: player2Id
+                });
+            }
         }
     });
+}
+
+function renderShootsGrid(shootObject) {
+    Object.keys(shootObject).forEach(function(cellId) {
+        document.querySelector(`#shoot-board #${cellId}`).classList.add(shootObject[cellId].contain);
+    });
+}
+
+function getPlayer2Id(doc) {
+    if(doc.data().player1 === userId) {
+        return doc.data().player2;
+    }
+    return doc.data().player1;
 }
 
 function main() {
