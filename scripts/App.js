@@ -1,4 +1,5 @@
 let shipsGrid = [];
+let shootsGrid = [];
 let ships = {
     carrier: [],
     battleship: [],
@@ -15,47 +16,47 @@ function createGrid(boardId) {
 
 function addShips() {
     //carrier
-    shipsGrid[0][0].cell = 'carrier';
+    shipsGrid[0][0].contain = 'carrier';
     document.querySelector('#cell_00').classList.add('carrier');
-    shipsGrid[1][0].cell = 'carrier';
+    shipsGrid[1][0].contain = 'carrier';
     document.querySelector('#cell_10').classList.add('carrier');
-    shipsGrid[2][0].cell = 'carrier';
+    shipsGrid[2][0].contain = 'carrier';
     document.querySelector('#cell_20').classList.add('carrier');
-    shipsGrid[3][0].cell = 'carrier';
+    shipsGrid[3][0].contain = 'carrier';
     document.querySelector('#cell_30').classList.add('carrier');
-    shipsGrid[4][0].cell = 'carrier';
+    shipsGrid[4][0].contain = 'carrier';
     document.querySelector('#cell_40').classList.add('carrier');
 
     //battleship
-    shipsGrid[2][4].cell = 'battleship';
+    shipsGrid[2][4].contain = 'battleship';
     document.querySelector('#cell_24').classList.add('battleship');
-    shipsGrid[2][5].cell = 'battleship';
+    shipsGrid[2][5].contain = 'battleship';
     document.querySelector('#cell_25').classList.add('battleship');
-    shipsGrid[2][6].cell = 'battleship';
+    shipsGrid[2][6].contain = 'battleship';
     document.querySelector('#cell_26').classList.add('battleship');
-    shipsGrid[2][7].cell = 'battleship';
+    shipsGrid[2][7].contain = 'battleship';
     document.querySelector('#cell_27').classList.add('battleship');
 
     //cruiser
-    shipsGrid[6][2].cell = 'cruiser';
+    shipsGrid[6][2].contain = 'cruiser';
     document.querySelector('#cell_62').classList.add('cruiser');
-    shipsGrid[7][2].cell = 'cruiser';
+    shipsGrid[7][2].contain = 'cruiser';
     document.querySelector('#cell_72').classList.add('cruiser');
-    shipsGrid[8][2].cell = 'cruiser';
+    shipsGrid[8][2].contain = 'cruiser';
     document.querySelector('#cell_82').classList.add('cruiser');
 
     //submarine
-    shipsGrid[5][6].cell = 'submarine';
+    shipsGrid[5][6].contain = 'submarine';
     document.querySelector('#cell_56').classList.add('submarine');
-    shipsGrid[5][7].cell = 'submarine';
+    shipsGrid[5][7].contain = 'submarine';
     document.querySelector('#cell_57').classList.add('submarine');
-    shipsGrid[5][8].cell = 'submarine';
+    shipsGrid[5][8].contain = 'submarine';
     document.querySelector('#cell_58').classList.add('submarine');
 
     //destroyer
-    shipsGrid[8][9].cell = 'destroyer';
+    shipsGrid[8][9].contain = 'destroyer';
     document.querySelector('#cell_89').classList.add('destroyer');
-    shipsGrid[9][9].cell = 'destroyer';
+    shipsGrid[9][9].contain = 'destroyer';
     document.querySelector('#cell_99').classList.add('destroyer');
 }
 
@@ -89,9 +90,23 @@ function createCellObject() {
     }
 }
 
+function createShootObject() {
+    for(let i = 0; i < 10; i++) {
+        let row = [];
+        for (let j = 0; j < 10; j++) {
+            const cellObject = {
+                id: `cell_${i}${j}`,
+                contain: 'ocean'
+            };
+            row.push(cellObject);
+        }
+        shootsGrid.push(row);
+    }
+}
+
 function createCell(i, j, boardId) {
     let cell = document.createElement('div');
-    cell.className = 'cell';
+    cell.className = 'ocean';
     cell.id = `cell_${i}${j}`;
     document.querySelector(`#${boardId}`).appendChild(cell);
     cell.addEventListener("click", activateCell);
@@ -108,6 +123,7 @@ function startGame() {
     createCellObject();
     addShips();
     createGrid("shoot-board");
+    createShootObject();
 
 
 }
@@ -147,7 +163,6 @@ function main() {
                     gameId = gameName.data().inGame;
                 }).then(() => {
                     let listener = dbRef.collection('games').doc(gameId).onSnapshot(function(doc) {
-                        console.log("test");
                         if(doc.data().status === 'close') {
                             console.log('Start Game');
                             loaderSpin.style.display = "none";
@@ -173,7 +188,6 @@ function main() {
                     gameId = gameName.data().inGame;
                 }).then(() => {
                     let listener = dbRef.collection('games').doc(gameId).onSnapshot(function(doc) {
-                        console.log("test");
                         if(doc.data().status === 'close') {
                             loaderSpin.style.display = "none";
                             loaderH2.remove();

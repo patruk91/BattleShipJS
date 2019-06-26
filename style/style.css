@@ -20,7 +20,7 @@
     justify-content: space-around;
 
 }
-.cell {
+.ocean {
     background: #2980b9;
     margin: 1px;
     color: white;
@@ -30,7 +30,7 @@
     flex: 1 0 auto;
     height:auto;
 }
-.cell:before {
+.ocean:before {
     content:'';
     float:left;
     padding-top:100%;
@@ -73,4 +73,8 @@
 
 .destroyer {
     background-color: silver;
+}
+
+.miss {
+    background-color: black;
 }
