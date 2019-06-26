@@ -179,6 +179,8 @@ function startGame() {
             } else {
                 dbRef.collection('games').doc(gameId).update({
                     phase: "shoot",
+                    coordinates: '',
+                    shootGrid: '',
                     sequence: player2Id
                 });
             }
@@ -187,6 +189,7 @@ function startGame() {
 }
 
 function renderShootsGrid(shootObject) {
+    console.log(shootObject);
     Object.keys(shootObject).forEach(function(cellId) {
         document.querySelector(`#shoot-board #${cellId}`).classList.add(shootsGrid[cellId].contain);
     });
