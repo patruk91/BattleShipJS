@@ -152,9 +152,9 @@ function startGame() {
               });
                             
         } else if(doc.data().sequence !== userId && doc.data().phase == 'test-shoot') {
-            // console.log("phase test-shoot: change phase to mark");
+            console.log("phase test-shoot: change phase to mark");
         } else if(doc.data().sequence === userId && doc.data().phase == 'mark') {
-            // console.log("phase mark: change sequence to player 2, change phase to shoot");
+            console.log("phase mark: change sequence to player 2, change phase to shoot");
         }
     });
 }
