@@ -163,13 +163,9 @@ function startGame() {
                 }
             }
             dbRef.collection('games').doc(gameId).update({
-                shootGrid: ''
-            }).then(() => {
-                dbRef.collection('games').doc(gameId).update({
-                    phase: "mark",
-                    shootGrid: JSON.stringify(shootsGrid),
-                    gameEnd: isGameOver
-                });
+                phase: "mark",
+                shootGrid: JSON.stringify(shootsGrid),
+                gameEnd: isGameOver
             });
             if(isGameOver) {
                 showGameOverScreen();
@@ -177,8 +173,7 @@ function startGame() {
         } else if(doc.data().sequence === userId && doc.data().phase === 'mark') {
             let player2Id = getPlayer2Id(doc);
             console.log("phase mark: change sequence to player 2, change phase to shoot");             //////TODO: remove
-            shootsGrid = JSON.parse(doc.data().shootGrid);
-            renderShootsGrid();
+            renderShootsGrid(JSON.parse(doc.data().shootGrid));
             if(doc.data().gameEnd == true) {
                 showGameOverScreen();
             } else {
@@ -191,8 +186,8 @@ function startGame() {
     });
 }
 
-function renderShootsGrid() {
-    Object.keys(shootsGrid).forEach(function(cellId) {
+function renderShootsGrid(shootObject) {
+    Object.keys(shootObject).forEach(function(cellId) {
         document.querySelector(`#shoot-board #${cellId}`).classList.add(shootsGrid[cellId].contain);
     });
 }
