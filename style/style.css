@@ -5,8 +5,8 @@
     justify-content: center;
 }
 .grid {
-    height: 500px;
-    margin: 50px 50px;
+    height: auto;
+    margin: 20px 30px;
     width: 500px;
   }
 

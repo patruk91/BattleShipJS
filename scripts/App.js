@@ -1,4 +1,4 @@
-let grid = [];
+let shipsGrid = [];
 let ships = {
     carrier: [],
     battleship: [],
@@ -7,90 +7,94 @@ let ships = {
     destroyer: []
 };
 
-function createGrid() {
+function createGrid(boardId) {
     for(let i = 0; i < 10; i++) {
-        addCellToRow(i);
+        addCellToRow(i, boardId);
     }
-    addShips();
 }
 
 function addShips() {
     //carrier
-    grid[0][0].cell = 'carrier';
+    shipsGrid[0][0].cell = 'carrier';
     document.querySelector('#cell_00').classList.add('carrier');
-    grid[1][0].cell = 'carrier';
+    shipsGrid[1][0].cell = 'carrier';
     document.querySelector('#cell_10').classList.add('carrier');
-    grid[2][0].cell = 'carrier';
+    shipsGrid[2][0].cell = 'carrier';
     document.querySelector('#cell_20').classList.add('carrier');
-    grid[3][0].cell = 'carrier';
+    shipsGrid[3][0].cell = 'carrier';
     document.querySelector('#cell_30').classList.add('carrier');
-    grid[4][0].cell = 'carrier';
+    shipsGrid[4][0].cell = 'carrier';
     document.querySelector('#cell_40').classList.add('carrier');
 
     //battleship
-    grid[2][4].cell = 'battleship';
+    shipsGrid[2][4].cell = 'battleship';
     document.querySelector('#cell_24').classList.add('battleship');
-    grid[2][5].cell = 'battleship';
+    shipsGrid[2][5].cell = 'battleship';
     document.querySelector('#cell_25').classList.add('battleship');
-    grid[2][6].cell = 'battleship';
+    shipsGrid[2][6].cell = 'battleship';
     document.querySelector('#cell_26').classList.add('battleship');
-    grid[2][7].cell = 'battleship';
+    shipsGrid[2][7].cell = 'battleship';
     document.querySelector('#cell_27').classList.add('battleship');
 
     //cruiser
-    grid[6][2].cell = 'cruiser';
+    shipsGrid[6][2].cell = 'cruiser';
     document.querySelector('#cell_62').classList.add('cruiser');
-    grid[7][2].cell = 'cruiser';
+    shipsGrid[7][2].cell = 'cruiser';
     document.querySelector('#cell_72').classList.add('cruiser');
-    grid[8][2].cell = 'cruiser';
+    shipsGrid[8][2].cell = 'cruiser';
     document.querySelector('#cell_82').classList.add('cruiser');
 
     //submarine
-    grid[5][6].cell = 'submarine';
+    shipsGrid[5][6].cell = 'submarine';
     document.querySelector('#cell_56').classList.add('submarine');
-    grid[5][7].cell = 'submarine';
+    shipsGrid[5][7].cell = 'submarine';
     document.querySelector('#cell_57').classList.add('submarine');
-    grid[5][8].cell = 'submarine';
+    shipsGrid[5][8].cell = 'submarine';
     document.querySelector('#cell_58').classList.add('submarine');
 
     //destroyer
-    grid[8][9].cell = 'destroyer';
+    shipsGrid[8][9].cell = 'destroyer';
     document.querySelector('#cell_89').classList.add('destroyer');
-    grid[9][9].cell = 'destroyer';
+    shipsGrid[9][9].cell = 'destroyer';
     document.querySelector('#cell_99').classList.add('destroyer');
 }
 
-function addCellToRow(i) {
-    let row = [];
+function addCellToRow(i, boardId) {
     const rowCells = document.createElement("div");
     rowCells.className = "row";
-    const board = document.querySelector(".grid");
+    const board = document.querySelector(`#${boardId}`);
 
     for (let j = 0; j < 10; j++) {
-        let cell = createCell(row, i, j);
+        let cell = createCell(i, j, boardId);
         rowCells.appendChild(cell);
     }
     board.appendChild(rowCells);
-    grid.push(row);
-
 }
 
-function createCell(row, i, j) {
-    const cellObject = {
-        id: `cell_${i}${j}`,
-        position: {
-            x: i,
-            y: j
-        },
-        contain: 'ocean'
-    };
+function createCellObject() {
+    for(let i = 0; i < 10; i++) {
+        let row = [];
+        for (let j = 0; j < 10; j++) {
+            const cellObject = {
+                id: `cell_${i}${j}`,
+                position: {
+                    x: i,
+                    y: j
+                },
+                contain: 'ocean'
+            };
+            row.push(cellObject);
+        }
+        shipsGrid.push(row);
+    }
+}
 
-    row.push(cellObject);
+function createCell(i, j, boardId) {
     let cell = document.createElement('div');
     cell.className = 'cell';
     cell.id = `cell_${i}${j}`;
-    document.querySelector('#ship-board').appendChild(cell);
-    // cell.addEventListener("click", activateCell);
+    document.querySelector(`#${boardId}`).appendChild(cell);
+    cell.addEventListener("click", activateCell);
     return cell;
 }
 
@@ -98,8 +102,13 @@ function activateCell() {
     this.classList.add('active');
 }
 
+
 function startGame() {
-    createGrid();
+    createGrid("ship-board");
+    createCellObject();
+    addShips();
+    createGrid("shoot-board");
+
 
 }
 
