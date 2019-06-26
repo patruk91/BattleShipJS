@@ -25,8 +25,7 @@ let ships = {
     submarine: [1 ,1 ,1],
     destroyer: [1 ,1],
     areAllShipSunk: function () {
-        return this.carrier.length + this.battleship.length + this.cruiser.length
-        + this.submarine.length + this.destroyer;
+        return this.carrier.length + this.battleship.length + this.cruiser.length + this.submarine.length + this.destroyer;
     }
 };
 
@@ -149,13 +148,13 @@ function startGame() {
             console.log("phase test-shoot: change phase to mark");
             let isGameOver = false;
             let coordinates = doc.data().coordinates;
-            let shipCellContain = getShipCell(coordinates).contain;
+            let shipCellContain = shipsGrid[coordinates].contain;
             if (shipCellContain === "ocean") {
-                shootsGrid.coordinates.contain = "miss";
+                shootsGrid[coordinates].contain = "miss";
             } else {
-                shootsGrid.coordinates.contain = shipCellContain;
+                shootsGrid[coordinates].contain = shipCellContain;
                 ships[shipCellContain].pop();
-                if (ships.areAllShipSunk() === 0) {
+                if (ships.areAllShipSunk() == 0) {
                     isGameOver = true;
                 }
             }
@@ -170,11 +169,6 @@ function startGame() {
         }
     });
 }
-
-function getShipCell(coordinates) {
-    return shootsGrid.coordinates;
-}
-
 
 function main() {
     const loaderSpin = document.querySelector("#loader");
