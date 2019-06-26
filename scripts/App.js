@@ -124,8 +124,15 @@ function startGame() {
     addShips();
     createGrid("shoot-board");
     createShootObject();
-
-
+    
+    let listener = dbRef.collection('games').doc(gameId).onSnapshot(function(doc) {
+        if(doc.data().sequence === userId && doc.data().phase == 'shoot') {
+            console.log('Start Game');
+            loaderSpin.style.display = "none";
+            loaderH2.remove();
+            startGame(listener());
+        }
+    });
 }
 
 function main() {
@@ -178,6 +185,10 @@ function main() {
                 player1: userId,
                 player2: '',
                 sequence: userId,
+                phase: 'shoot',
+                coordinates: '',
+                shootGrid: '',
+                gameEnd: false,
                 status: 'open'
             }).then(docRef => {
                 dbRef.collection('users').doc(userId).update({
