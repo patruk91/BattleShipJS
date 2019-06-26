@@ -98,7 +98,6 @@ function activateCell() {
     this.classList.add('active');
 }
 
-
 function startGame() {
     createGrid();
 
@@ -106,7 +105,8 @@ function startGame() {
 
 function main() {
     const loaderSpin = document.querySelector("#loader");
-    const loaderh2 = document.querySelector("#loaderh2");
+    const loaderH2 = document.querySelector("#loaderh2");
+
 
     let userId = '';
     const dbRef = firebase.firestore();
@@ -140,6 +140,8 @@ function main() {
                     dbRef.collection('games').doc(gameId).onSnapshot(function(doc) {
                         if(doc.data().status === 'close') {
                             console.log('Start Game');
+                            loaderSpin.style.display = "none";
+                            loaderH2.remove();
                             startGame(userId);
                         }
                     });
@@ -163,7 +165,7 @@ function main() {
                     dbRef.collection('games').doc(gameId).onSnapshot(function(doc) {
                         if(doc.data().status === 'close') {
                             loaderSpin.style.display = "none";
-                            loaderh2.remove();
+                            loaderH2.remove();
                             console.log('Start Game');
                             startGame();
                         }
