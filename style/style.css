@@ -22,7 +22,7 @@
 }
 .ocean {
     background: #2980b9;
-    margin: 1px;
+    margin: 0.5px;
     color: white;
     font-weight: bold;
     font-size: 1.5em;
@@ -48,6 +48,16 @@
     height: 120px;
     -webkit-animation: spin 2s linear infinite; /* Safari */
     animation: spin 2s linear infinite;
+}
+
+.loader-box {
+    flex: 1 1 100%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
 }
 
 @keyframes spin {

@@ -137,10 +137,12 @@ function startGame() {
     addShips();
     createGrid("shoot-board");
     createShootObject();
-    
+    const h2Tag = document.querySelector("#loaderh2");
+
     let gameControlListener = dbRef.collection('games').doc(gameId).onSnapshot(function(doc) {
         if(doc.data().sequence === userId && doc.data().phase === 'shoot') {
             console.log('Phase shoot: Change phase to test-shoot');             //////TODO: remove
+            h2Tag.innerHTML = "Shoot";
             x.registerListener(function(val) {
                 dbRef.collection('games').doc(gameId).update({
                     coordinates: val,
@@ -235,7 +237,7 @@ function main() {
                         if(doc.data().status === 'close') {
                             console.log('Start Game');
                             loaderSpin.style.display = "none";
-                            loaderH2.remove();
+                            loaderH2.innerHTML = "";
                             startGame(listener());
                         }
                     });
@@ -263,7 +265,7 @@ function main() {
                     let listener = dbRef.collection('games').doc(gameId).onSnapshot(function(doc) {
                         if(doc.data().status === 'close') {
                             loaderSpin.style.display = "none";
-                            loaderH2.remove();
+                            loaderH2.innerHTML = "";
                             console.log('Start Game');
                             startGame(listener());
                         }
