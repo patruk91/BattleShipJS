@@ -144,15 +144,20 @@ function startGame() {
     const h2Tag = document.querySelector("#loaderh2");
 
     let gameControlListener = dbRef.collection('games').doc(gameId).onSnapshot(function(doc) {
+        if(doc.data().sequence !== userId && doc.data().phase === 'shoot') {
+            h2Tag.innerHTML = "Waiting for second player";
+            displayPopUp();
+        }
         if(doc.data().sequence === userId && doc.data().phase === 'shoot') {
+            closePopUp();
             console.log('Phase shoot: Change phase to test-shoot');             //////TODO: remove
             h2Tag.innerHTML = "Shoot";
             x.registerListener(function(val) {
-                dbRef.collection('games').doc(gameId).update({
-                    coordinates: val,
-                    phase: "test-shoot"
-                });
-              });
+            dbRef.collection('games').doc(gameId).update({
+                coordinates: val,
+                phase: "test-shoot"
+            });
+          });
                             
         } else if(doc.data().sequence !== userId && doc.data().phase === 'test-shoot') {
             console.log("phase test-shoot: change phase to mark");             //////TODO: remove
@@ -248,6 +253,7 @@ function main() {
                 });
             });
         } else {
+            displayPopUp();
             loaderSpin.className = "loader";
                 dbRef.collection('games').add({
                 player1: userId,
@@ -268,9 +274,9 @@ function main() {
                 }).then(() => {
                     let listener = dbRef.collection('games').doc(gameId).onSnapshot(function(doc) {
                         if(doc.data().status === 'close') {
-                            loaderSpin.style.display = "none";
                             loaderH2.innerHTML = "";
                             console.log('Start Game');
+                            closePopUp();
                             startGame(listener());
                         }
                     });
@@ -278,6 +284,16 @@ function main() {
             });
         }
     })
+}
+
+function displayPopUp() {
+    let modal = document.getElementById("modal");
+    modal.style.display = "block";
+}
+
+function closePopUp() {
+    let modal = document.getElementById("modal");
+    modal.style.display = "none";
 }
 
 main();
