@@ -151,9 +151,9 @@ function startGame() {
             let coordinates = doc.data().coordinates;
             let shipCellContain = getShipCell(coordinates).contain;
             if (shipCellContain === "ocean") {
-                shootsGrid.find(x => x.id === coordinates).contain = "miss";
+                shootsGrid.coordinates.contain = "miss";
             } else {
-                shootsGrid.find(x => x.id === coordinates).contain = shipCellContain;
+                shootsGrid.coordinates.contain = shipCellContain;
                 ships[shipCellContain].pop();
                 if (ships.areAllShipSunk() === 0) {
                     isGameOver = true;
@@ -172,13 +172,7 @@ function startGame() {
 }
 
 function getShipCell(coordinates) {
-    let shipCell;
-    for (let cellGrid of shipsGrid) {
-        shipCell = cellGrid.find(x => x.id === coordinates);
-        if (shipCell) {
-            return shipCell;
-        }
-    }
+    return shootsGrid.coordinates;
 }
 
 
