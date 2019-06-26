@@ -146,12 +146,13 @@ function main() {
                 dbRef.collection('users').doc(userId).get().then(gameName => {
                     gameId = gameName.data().inGame;
                 }).then(() => {
-                    dbRef.collection('games').doc(gameId).onSnapshot(function(doc) {
+                    let listener = dbRef.collection('games').doc(gameId).onSnapshot(function(doc) {
+                        console.log("test");
                         if(doc.data().status === 'close') {
                             console.log('Start Game');
                             loaderSpin.style.display = "none";
                             loaderH2.remove();
-                            startGame(userId);
+                            startGame(listener());
                         }
                     });
                 });
@@ -171,12 +172,13 @@ function main() {
                 dbRef.collection('users').doc(userId).get().then(gameName => {
                     gameId = gameName.data().inGame;
                 }).then(() => {
-                    dbRef.collection('games').doc(gameId).onSnapshot(function(doc) {
+                    let listener = dbRef.collection('games').doc(gameId).onSnapshot(function(doc) {
+                        console.log("test");
                         if(doc.data().status === 'close') {
                             loaderSpin.style.display = "none";
                             loaderH2.remove();
                             console.log('Start Game');
-                            startGame();
+                            startGame(listener());
                         }
                     });
                 });
