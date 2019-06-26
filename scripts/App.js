@@ -127,8 +127,12 @@ function shoot() {
 }
 
 
-function showGameOverScreen() {
-    alert("Game Over");
+function showGameOverScreen(user) {
+    if(user == userId) {
+        alert("You win!");
+    } else {
+        alert("You lost!");
+    }
 }
 
 function startGame() {
@@ -170,7 +174,7 @@ function startGame() {
                 gameEnd: isGameOver
             }).then(() => {
                 if(isGameOver) {
-                    showGameOverScreen();
+                    showGameOverScreen(doc.data().sequence);
                 }
             });
         } else if(doc.data().sequence === userId && doc.data().phase === 'mark') {
