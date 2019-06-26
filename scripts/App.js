@@ -163,9 +163,13 @@ function startGame() {
                 }
             }
             dbRef.collection('games').doc(gameId).update({
-                phase: "mark",
-                shootGrid: JSON.stringify(shootsGrid),
-                gameEnd: isGameOver
+                shootGrid: ''
+            }).then(() => {
+                dbRef.collection('games').doc(gameId).update({
+                    phase: "mark",
+                    shootGrid: JSON.stringify(shootsGrid),
+                    gameEnd: isGameOver
+                });
             });
             if(isGameOver) {
                 showGameOverScreen();
