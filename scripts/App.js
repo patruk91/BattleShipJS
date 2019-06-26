@@ -123,7 +123,7 @@ function createCell(i, j, boardId) {
 }
 
 function shoot() {
-    x.a = shootsGrid.find(x => x.id === this.id);
+    x.a = this.id;
 }
 
 
@@ -140,10 +140,10 @@ function startGame() {
     
     let gameControlListener = dbRef.collection('games').doc(gameId).onSnapshot(function(doc) {
         if(doc.data().sequence === userId && doc.data().phase === 'shoot') {
-            // console.log('Phase shoot: Change phase to test-shoot');
+            console.log('Phase shoot: Change phase to test-shoot');
             x.registerListener(function(val) {
                 dbRef.collection('games').doc(gameId).update({
-                    coordinates: val.id,
+                    coordinates: val,
                     phase: "test-shoot"
                 });
               });
