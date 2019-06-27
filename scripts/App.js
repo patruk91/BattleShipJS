@@ -10,20 +10,11 @@ function startGame() {
 function handleGamePhases() {
     let gameControlListener = dbRef.collection('games').doc(gameId).onSnapshot(function(doc) {
         if(doc.data().sequence !== undefined && doc.data().sequence !== userId && doc.data().phase === 'shoot') {
-            document.querySelector("#loaderh2").innerHTML = "Waiting for second player";
-            displayPopUp();
+            handleUserWaitingForOponentShoot();
         } else if(doc.data().sequence === userId && doc.data().phase === 'shoot') {
-            closePopUp();
-            console.log('Phase shoot: Change phase to test-shoot');             //////TODO: remove
-            document.querySelector("#loaderh2").innerHTML = "Shoot";
-            x.registerListener(function(val) {
-            dbRef.collection('games').doc(gameId).update({
-                coordinates: val,
-                phase: "test-shoot"
-            });
-          });          
+            handleUserShootPhase();          
         } else if(doc.data().sequence !== userId && doc.data().phase === 'test-shoot') {
-            console.log("phase test-shoot: change phase to mark");             //////TODO: remove
+            console.log("phase test-shoot: change phase to mark");
             let isGameOver = false;
             let coordinates = doc.data().coordinates;
             let shipCellContain = shipsGrid[coordinates].contain;
@@ -47,7 +38,7 @@ function handleGamePhases() {
             });
         } else if(doc.data().sequence === userId && doc.data().phase === 'mark') {
             let player2Id = getPlayer2Id(doc);
-            console.log("phase mark: change sequence to player 2, change phase to shoot");             //////TODO: remove
+            console.log("phase mark: change sequence to player 2, change phase to shoot");
             renderShootsGrid(JSON.parse(doc.data().shootGrid));
             if(doc.data().gameEnd == true) {
                 showGameOverScreen(doc.data().sequence);
@@ -61,6 +52,31 @@ function handleGamePhases() {
             }
         }
     });
+}
+
+function handleUserShootPhase() {
+    startShootPhase();
+    x.registerListener(function (val) {
+        updateGameInFirebaseAfterShoot(val);
+    });
+}
+
+function updateGameInFirebaseAfterShoot(val) {
+    dbRef.collection('games').doc(gameId).update({
+        coordinates: val,
+        phase: "test-shoot"
+    });
+}
+
+function startShootPhase() {
+    closePopUp();
+    console.log('Phase shoot: Change phase to test-shoot');
+    document.querySelector("#loaderh2").innerHTML = "Shoot";
+}
+
+function handleUserWaitingForOponentShoot() {
+    document.querySelector("#loaderh2").innerHTML = "Waiting for second player";
+    displayPopUp();
 }
 
 function createUI() {
