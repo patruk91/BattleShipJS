@@ -30,78 +30,8 @@ let ships = {
 };
 
 function main() {
-    const loaderSpin = document.querySelector("#loader");
-    const loaderH2 = document.querySelector("#loaderh2");
-
-    window.addEventListener("beforeunload", e => {
-        firebase.auth().signInAnonymously();
-    });
-
-    firebase.auth().onAuthStateChanged(firebaseUser => {
-        userId = firebaseUser.uid;
-
-        dbRef.collection('users').doc(userId).set({
-            inGame: "",
-        })
-    });
-
-    dbRef.collection('games').where('status', '==', 'open').get().then(snapshot => {
-        if(snapshot.docs.length !== 0) {
-            dbRef.collection('games').doc(snapshot.docs[0].id).update({
-                player2: userId,
-                status: 'close'
-            }).then(() => {
-                dbRef.collection('users').doc(userId).update({
-                    inGame: snapshot.docs[0].id
-                });
-            }).then(() => {
-                dbRef.collection('users').doc(userId).get().then(gameName => {
-                    gameId = gameName.data().inGame;
-                    if (gameId !== "") {
-                        let listener = dbRef.collection('games').doc(gameId).onSnapshot(function(doc) {
-                            if(doc.data().status === 'close') {
-                                console.log('Start Game');
-                                // loaderSpin.style.display = "none";
-                                loaderH2.innerHTML = "";
-                                startGame(listener());
-                            }
-                        });
-                    }
-                });
-            });
-        } else {
-            displayPopUp();
-            loaderSpin.className = "loader";
-            dbRef.collection('games').add({
-                player1: userId,
-                player2: '',
-                sequence: userId,
-                phase: 'shoot',
-                coordinates: '',
-                shootGrid: '',
-                gameEnd: false,
-                status: 'open'
-            }).then(docRef => {
-                dbRef.collection('users').doc(userId).update({
-                    inGame: docRef.id
-                });
-            }).then(() => {
-                dbRef.collection('users').doc(userId).get().then(gameName => {
-                    gameId = gameName.data().inGame;
-                    if (gameId !== "") {
-                        let listener = dbRef.collection('games').doc(gameId).onSnapshot(function(doc) {
-                            if(doc.data().status === 'close') {
-                                loaderH2.innerHTML = "";
-                                console.log('Start Game');
-                                closePopUp();
-                                startGame(listener());
-                            }
-                        });
-                    }
-                });
-            });
-        }
-    })
+    logInUser();
+    matchmaking();
 }
 
 main();
