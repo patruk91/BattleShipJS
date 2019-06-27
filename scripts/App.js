@@ -33,6 +33,9 @@ function createGrid(boardId) {
     for(let i = 0; i < 10; i++) {
         addCellToRow(i, boardId);
     }
+    if(boardId === "shoot-board"){
+        document.querySelector(`#${boardId}`).addEventListener("click", shoot);
+    }
 }
 
 function addShips() {
@@ -118,12 +121,11 @@ function createCell(i, j, boardId) {
     cell.className = 'ocean';
     cell.id = `cell_${i}${j}`;
     document.querySelector(`#${boardId}`).appendChild(cell);
-    cell.addEventListener("click", shoot);
     return cell;
 }
 
-function shoot() {
-    x.a = this.id;
+function shoot(event) {
+    x.a = event.target.id;
 }
 
 
