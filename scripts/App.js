@@ -11,7 +11,7 @@ function startGame() {
     const h2Tag = document.querySelector("#loaderh2");
 
     let gameControlListener = dbRef.collection('games').doc(gameId).onSnapshot(function(doc) {
-        if(doc.data().sequence !== userId && doc.data().phase === 'shoot') {
+        if(doc.data().sequence !== undefined && doc.data().sequence !== userId && doc.data().phase === 'shoot') {
             h2Tag.innerHTML = "Waiting for second player";
             displayPopUp();
         }
