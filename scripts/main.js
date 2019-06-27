@@ -61,7 +61,7 @@ function main() {
                         let listener = dbRef.collection('games').doc(gameId).onSnapshot(function(doc) {
                             if(doc.data().status === 'close') {
                                 console.log('Start Game');
-                                loaderSpin.style.display = "none";
+                                // loaderSpin.style.display = "none";
                                 loaderH2.innerHTML = "";
                                 startGame(listener());
                             }
