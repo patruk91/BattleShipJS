@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>BattleShip - game</title>
+    <link rel="stylesheet" href="style/style.css" media="screen">
+    <script src="https://www.gstatic.com/firebasejs/6.2.3/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.2.3/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.2.3/firebase-auth.js"></script>
+
+
+
+
+
+</head>
+<body>
+    <div class="container">
+        <div id="modal" class="popup">
+            <div class="loader-box popup-contnet">
+                <h2 id="loaderh2">Waiting for opponent...</h2>
+                <div id="loader"></div>
+            </div>
+        </div>
+        <div class="grid" id="shoot-board"></div>
+        <div class="grid" id="ship-board"></div>
+    </div>
+
+    <script>
+        let firebaseConfig = {
+            apiKey: "AIzaSyAVggAA9N-LVNqxRWakfDJMKeSY5a_u6FE",
+            authDomain: "battleshipjs.firebaseapp.com",
+            databaseURL: "https://battleshipjs.firebaseio.com",
+            projectId: "battleshipjs",
+            storageBucket: "",
+            messagingSenderId: "6989014295",
+            appId: "1:6989014295:web:db8daa7b8d36d6ed"
+        };
+        firebase.initializeApp(firebaseConfig);
+        let db = firebase.firestore();
+        // db.settings({timestampsInSnapshots: true});
+    </script>
+    <script src="scripts/App.js"></script>
+
+</body>
+</html>
