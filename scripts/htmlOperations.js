@@ -1,6 +1,8 @@
 function displayPopUp() {
     let modal = document.getElementById("modal");
     modal.style.display = "block";
+    let loader = document.querySelector('#loader');
+    loader.className = "loader";
 }
 
 function closePopUp() {

@@ -14,8 +14,7 @@ function startGame() {
         if(doc.data().sequence !== undefined && doc.data().sequence !== userId && doc.data().phase === 'shoot') {
             h2Tag.innerHTML = "Waiting for second player";
             displayPopUp();
-        }
-        if(doc.data().sequence === userId && doc.data().phase === 'shoot') {
+        } else if(doc.data().sequence === userId && doc.data().phase === 'shoot') {
             closePopUp();
             console.log('Phase shoot: Change phase to test-shoot');             //////TODO: remove
             h2Tag.innerHTML = "Shoot";
@@ -24,8 +23,7 @@ function startGame() {
                 coordinates: val,
                 phase: "test-shoot"
             });
-          });
-                            
+          });          
         } else if(doc.data().sequence !== userId && doc.data().phase === 'test-shoot') {
             console.log("phase test-shoot: change phase to mark");             //////TODO: remove
             let isGameOver = false;
