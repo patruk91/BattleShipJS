@@ -134,7 +134,8 @@ function handlePlayerWaitingForOponentShoot() {
 function createUI() {
     createGrid("ship-board");
     createCellObject();
-    addShips();
+    placesShips();
+    renderShipsGrid(shipsGrid);
     createGrid("shoot-board");
     createShootObject();
 }
