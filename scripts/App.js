@@ -50,17 +50,11 @@ function handleTestingOponentShoot(doc) {
     console.log("phase test-shoot: change phase to mark");
     let isGameOver = false;
     let coordinates = doc.data().coordinates;
-    let shipCellContain = shipsGrid[coordinates].contain;
-    if (shipCellContain === "ocean") {
-        shootsGrid[coordinates].contain = "miss";
-    }
-    else {
-        shootsGrid[coordinates].contain = shipCellContain;
-        ships[shipCellContain].pop();
-        if (ships.areAllShipSunk() == 0) {
-            isGameOver = true;
-        }
-    }
+    isGameOver = markShootBasedOnCoordiantes(coordinates, isGameOver);
+    sendShootGreedToDatabase(isGameOver, doc);
+}
+
+function sendShootGreedToDatabase(isGameOver, doc) {
     dbRef.collection('games').doc(gameId).update({
         phase: "mark",
         shootGrid: JSON.stringify(shootsGrid),
@@ -70,6 +64,30 @@ function handleTestingOponentShoot(doc) {
             showGameOverScreen(doc.data().sequence);
         }
     });
+}
+
+function markShootBasedOnCoordiantes(coordinates, isGameOver) {
+    let shipCellContain = shipsGrid[coordinates].contain;
+    if (shipCellContain === "ocean") {
+        shootsGrid[coordinates].contain = "miss";
+    }
+    else {
+        markShipAfterHit(coordinates, shipCellContain);
+        isGameOver = testIfGameIsOver(isGameOver);
+    }
+    return isGameOver;
+}
+
+function markShipAfterHit(coordinates, shipCellContain) {
+    shootsGrid[coordinates].contain = shipCellContain;
+    ships[shipCellContain].pop();
+}
+
+function testIfGameIsOver(isGameOver) {
+    if (ships.areAllShipSunk() == 0) {
+        isGameOver = true;
+    }
+    return isGameOver;
 }
 
 function shouldPlayerRenderShootsAndEndRound(doc) {
