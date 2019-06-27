@@ -1,15 +1,9 @@
 function logInUser() {
-    window.addEventListener("beforeunload", e => {
-        firebase.auth().signInAnonymously();
-    });
+    userId = "player1" + Math.floor(Math.random() * 1000000);
+    dbRef.collection('users').doc(userId).set({
+        inGame: "",
+    })
 
-    firebase.auth().onAuthStateChanged(firebaseUser => {
-        userId = firebaseUser.uid;
-
-        dbRef.collection('users').doc(userId).set({
-            inGame: "",
-        })
-    });
 }
 
 function endMatchmaking() {

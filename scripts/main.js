@@ -25,7 +25,7 @@ let ships = {
     submarine: [1 ,1 ,1],
     destroyer: [1 ,1],
     areAllShipSunk: function () {
-        return this.carrier.length + this.battleship.length + this.cruiser.length + this.submarine.length + this.destroyer;
+        return this.carrier.length + this.battleship.length + this.cruiser.length + this.submarine.length + this.destroyer.length;
     }
 };
 
