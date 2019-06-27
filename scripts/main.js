@@ -29,10 +29,7 @@ let ships = {
     }
 };
 
-function main() {
-    const loaderSpin = document.querySelector("#loader");
-    const loaderH2 = document.querySelector("#loaderh2");
-
+function logInUser() {
     window.addEventListener("beforeunload", e => {
         firebase.auth().signInAnonymously();
     });
@@ -44,31 +41,42 @@ function main() {
             inGame: "",
         })
     });
+}
+
+function handleConnectionWithNoGameOpen(snapshot) {
+    dbRef.collection('games').doc(snapshot.docs[0].id).update({
+        player2: userId,
+        status: 'close'
+    }).then(() => {
+        dbRef.collection('users').doc(userId).update({
+            inGame: snapshot.docs[0].id
+        });
+    }).then(() => {
+        dbRef.collection('users').doc(userId).get().then(gameName => {
+            gameId = gameName.data().inGame;
+            if (gameId !== "") {
+                let listener = dbRef.collection('games').doc(gameId).onSnapshot(function(doc) {
+                    if(doc.data().status === 'close') {
+                        console.log('Start Game');
+                        // loaderSpin.style.display = "none";
+                        loaderH2.innerHTML = "";
+                        startGame(listener());
+                    }
+                });
+            }
+        });
+    });
+}
+
+function main() {
+    const loaderSpin = document.querySelector("#loader");
+    const loaderH2 = document.querySelector("#loaderh2");
+
+    logInUser();
 
     dbRef.collection('games').where('status', '==', 'open').get().then(snapshot => {
         if(snapshot.docs.length !== 0) {
-            dbRef.collection('games').doc(snapshot.docs[0].id).update({
-                player2: userId,
-                status: 'close'
-            }).then(() => {
-                dbRef.collection('users').doc(userId).update({
-                    inGame: snapshot.docs[0].id
-                });
-            }).then(() => {
-                dbRef.collection('users').doc(userId).get().then(gameName => {
-                    gameId = gameName.data().inGame;
-                    if (gameId !== "") {
-                        let listener = dbRef.collection('games').doc(gameId).onSnapshot(function(doc) {
-                            if(doc.data().status === 'close') {
-                                console.log('Start Game');
-                                // loaderSpin.style.display = "none";
-                                loaderH2.innerHTML = "";
-                                startGame(listener());
-                            }
-                        });
-                    }
-                });
-            });
+            handleConnectionWithNoGameOpen(snapshot);
         } else {
             displayPopUp();
             loaderSpin.className = "loader";
