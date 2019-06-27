@@ -3,21 +3,19 @@ function shoot(event) {
 }
 
 function startGame() {
-    createGrid("ship-board");
-    createCellObject();
-    addShips();
-    createGrid("shoot-board");
-    createShootObject();
-    const h2Tag = document.querySelector("#loaderh2");
+    createUI();
+    handleGamePhases();
+}
 
+function handleGamePhases() {
     let gameControlListener = dbRef.collection('games').doc(gameId).onSnapshot(function(doc) {
         if(doc.data().sequence !== undefined && doc.data().sequence !== userId && doc.data().phase === 'shoot') {
-            h2Tag.innerHTML = "Waiting for second player";
+            document.querySelector("#loaderh2").innerHTML = "Waiting for second player";
             displayPopUp();
         } else if(doc.data().sequence === userId && doc.data().phase === 'shoot') {
             closePopUp();
             console.log('Phase shoot: Change phase to test-shoot');             //////TODO: remove
-            h2Tag.innerHTML = "Shoot";
+            document.querySelector("#loaderh2").innerHTML = "Shoot";
             x.registerListener(function(val) {
             dbRef.collection('games').doc(gameId).update({
                 coordinates: val,
@@ -63,6 +61,14 @@ function startGame() {
             }
         }
     });
+}
+
+function createUI() {
+    createGrid("ship-board");
+    createCellObject();
+    addShips();
+    createGrid("shoot-board");
+    createShootObject();
 }
 
 function getPlayer2Id(doc) {
