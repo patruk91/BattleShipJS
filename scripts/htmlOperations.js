@@ -16,6 +16,12 @@ function renderShootsGrid(shootObject) {
     });
 }
 
+function renderShipsGrid(shipsObject) {
+    Object.keys(shipsObject).forEach(function (cellId) {
+        document.querySelector(`#ship-board #${cellId}`).classList.add(shipsObject[cellId].contain);
+    });
+}
+
 function createGrid(boardId) {
     for(let i = 0; i < 10; i++) {
         addCellToRow(i, boardId);
