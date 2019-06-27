@@ -57,21 +57,22 @@ function main() {
             }).then(() => {
                 dbRef.collection('users').doc(userId).get().then(gameName => {
                     gameId = gameName.data().inGame;
-                }).then(() => {
-                    let listener = dbRef.collection('games').doc(gameId).onSnapshot(function(doc) {
-                        if(doc.data().status === 'close') {
-                            console.log('Start Game');
-                            loaderSpin.style.display = "none";
-                            loaderH2.innerHTML = "";
-                            startGame(listener());
-                        }
-                    });
+                    if (gameId !== "") {
+                        let listener = dbRef.collection('games').doc(gameId).onSnapshot(function(doc) {
+                            if(doc.data().status === 'close') {
+                                console.log('Start Game');
+                                loaderSpin.style.display = "none";
+                                loaderH2.innerHTML = "";
+                                startGame(listener());
+                            }
+                        });
+                    }
                 });
             });
         } else {
             displayPopUp();
             loaderSpin.className = "loader";
-                dbRef.collection('games').add({
+            dbRef.collection('games').add({
                 player1: userId,
                 player2: '',
                 sequence: userId,
@@ -87,15 +88,16 @@ function main() {
             }).then(() => {
                 dbRef.collection('users').doc(userId).get().then(gameName => {
                     gameId = gameName.data().inGame;
-                }).then(() => {
-                    let listener = dbRef.collection('games').doc(gameId).onSnapshot(function(doc) {
-                        if(doc.data().status === 'close') {
-                            loaderH2.innerHTML = "";
-                            console.log('Start Game');
-                            closePopUp();
-                            startGame(listener());
-                        }
-                    });
+                    if (gameId !== "") {
+                        let listener = dbRef.collection('games').doc(gameId).onSnapshot(function(doc) {
+                            if(doc.data().status === 'close') {
+                                loaderH2.innerHTML = "";
+                                console.log('Start Game');
+                                closePopUp();
+                                startGame(listener());
+                            }
+                        });
+                    }
                 });
             });
         }
