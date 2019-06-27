@@ -8,53 +8,87 @@ function startGame() {
 }
 
 function handleGamePhases() {
-    let gameControlListener = dbRef.collection('games').doc(gameId).onSnapshot(function(doc) {
-        if(doc.data().sequence !== undefined && doc.data().sequence !== userId && doc.data().phase === 'shoot') {
-            handleUserWaitingForOponentShoot();
-        } else if(doc.data().sequence === userId && doc.data().phase === 'shoot') {
-            handleUserShootPhase();          
-        } else if(doc.data().sequence !== userId && doc.data().phase === 'test-shoot') {
-            console.log("phase test-shoot: change phase to mark");
-            let isGameOver = false;
-            let coordinates = doc.data().coordinates;
-            let shipCellContain = shipsGrid[coordinates].contain;
-            if (shipCellContain === "ocean") {
-                shootsGrid[coordinates].contain = "miss";
-            } else {
-                shootsGrid[coordinates].contain = shipCellContain;
-                ships[shipCellContain].pop();
-                if (ships.areAllShipSunk() == 0) {
-                    isGameOver = true;
-                }
-            }
-            dbRef.collection('games').doc(gameId).update({
-                phase: "mark",
-                shootGrid: JSON.stringify(shootsGrid),
-                gameEnd: isGameOver
-            }).then(() => {
-                if(isGameOver) {
-                    showGameOverScreen(doc.data().sequence);
-                }
-            });
-        } else if(doc.data().sequence === userId && doc.data().phase === 'mark') {
-            let player2Id = getPlayer2Id(doc);
-            console.log("phase mark: change sequence to player 2, change phase to shoot");
-            renderShootsGrid(JSON.parse(doc.data().shootGrid));
-            if(doc.data().gameEnd == true) {
-                showGameOverScreen(doc.data().sequence);
-            } else {
-                dbRef.collection('games').doc(gameId).update({
-                    phase: "shoot",
-                    coordinates: '',
-                    shootGrid: '',
-                    sequence: player2Id
-                });
-            }
+    dbRef.collection('games').doc(gameId).onSnapshot(function(doc) {
+        if(isPlayerWaitingForOponentShoot(doc)) {
+            handlePlayerWaitingForOponentShoot();
+        } else if(isPlayerTurnToShoot(doc)) {
+            handlePlayerShootPhase();          
+        } else if(shouldPlayerTestOponentShoot(doc)) {
+            handleTestingOponentShoot(doc);
+        } else if(shouldPlayerRenderShootsAndEndRound(doc)) {
+            handleRenderShoot(doc);
+            endRoundOrEndGame(doc);
         }
     });
 }
 
-function handleUserShootPhase() {
+function endRoundOrEndGame(doc) {
+    if (doc.data().gameEnd == true) {
+        showGameOverScreen(doc.data().sequence);
+    }
+    else {
+        updateDatabaseToEndRound(doc);
+    }
+}
+
+function updateDatabaseToEndRound(doc) {
+    let player2Id = getPlayer2Id(doc);
+    dbRef.collection('games').doc(gameId).update({
+        phase: "shoot",
+        coordinates: '',
+        shootGrid: '',
+        sequence: player2Id
+    });
+}
+
+function handleRenderShoot(doc) {
+    console.log("phase mark: change sequence to player 2, change phase to shoot");
+    renderShootsGrid(JSON.parse(doc.data().shootGrid));
+}
+
+function handleTestingOponentShoot(doc) {
+    console.log("phase test-shoot: change phase to mark");
+    let isGameOver = false;
+    let coordinates = doc.data().coordinates;
+    let shipCellContain = shipsGrid[coordinates].contain;
+    if (shipCellContain === "ocean") {
+        shootsGrid[coordinates].contain = "miss";
+    }
+    else {
+        shootsGrid[coordinates].contain = shipCellContain;
+        ships[shipCellContain].pop();
+        if (ships.areAllShipSunk() == 0) {
+            isGameOver = true;
+        }
+    }
+    dbRef.collection('games').doc(gameId).update({
+        phase: "mark",
+        shootGrid: JSON.stringify(shootsGrid),
+        gameEnd: isGameOver
+    }).then(() => {
+        if (isGameOver) {
+            showGameOverScreen(doc.data().sequence);
+        }
+    });
+}
+
+function shouldPlayerRenderShootsAndEndRound(doc) {
+    return doc.data().sequence === userId && doc.data().phase === 'mark';
+}
+
+function shouldPlayerTestOponentShoot(doc) {
+    return doc.data().sequence !== userId && doc.data().phase === 'test-shoot';
+}
+
+function isPlayerTurnToShoot(doc) {
+    return doc.data().sequence === userId && doc.data().phase === 'shoot';
+}
+
+function isPlayerWaitingForOponentShoot(doc) {
+    return doc.data().sequence !== undefined && doc.data().sequence !== userId && doc.data().phase === 'shoot';
+}
+
+function handlePlayerShootPhase() {
     startShootPhase();
     x.registerListener(function (val) {
         updateGameInFirebaseAfterShoot(val);
@@ -74,7 +108,7 @@ function startShootPhase() {
     document.querySelector("#loaderh2").innerHTML = "Shoot";
 }
 
-function handleUserWaitingForOponentShoot() {
+function handlePlayerWaitingForOponentShoot() {
     document.querySelector("#loaderh2").innerHTML = "Waiting for second player";
     displayPopUp();
 }
