@@ -230,7 +230,7 @@ function main() {
     });
 
     dbRef.collection('games').where('status', '==', 'open').get().then(snapshot => {
-        if(snapshot.docs.length !== 0 && userId !== firebase.auth().currentUser.uid) {
+        if(snapshot.docs.length !== 0) {
             dbRef.collection('games').doc(snapshot.docs[0].id).update({
                 player2: userId,
                 status: 'close'
@@ -250,25 +250,6 @@ function main() {
                             startGame(listener());
                         }
                     });
-                });
-            });
-        } else if (snapshot.docs.length !== 0 && userId === firebase.auth().currentUser.uid) {
-            console.log("wait");
-            displayPopUp();
-            loaderSpin.className = "loader";
-            dbRef.collection('users').doc(userId).update({
-                inGame: snapshot.docs[0].id
-            });
-            dbRef.collection('users').doc(userId).get().then(gameName => {
-                gameId = gameName.data().inGame;
-            }).then(() => {
-                let listener = dbRef.collection('games').doc(gameId).onSnapshot(function(doc) {
-                    if(doc.data().status === 'close') {
-                        console.log('Start Game');
-                        loaderSpin.style.display = "none";
-                        loaderH2.innerHTML = "";
-                        startGame(listener());
-                    }
                 });
             });
         } else {
