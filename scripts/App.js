@@ -127,7 +127,7 @@ function startShootPhase() {
 }
 
 function handlePlayerWaitingForOponentShoot() {
-    document.querySelector("#loaderh2").innerHTML = "Waiting for second player";
+    document.querySelector("#loaderh2").innerHTML = "Waiting for opponent move...";
     displayPopUp();
 }
 
