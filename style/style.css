@@ -27,7 +27,9 @@ body {
 
 }
 .ocean {
-    background: #2980b9;
+    /*background: #274A5D;*/
+    background: #0d7f8b;
+    opacity: 0.8;
     border: 0.2px white solid;
     color: white;
     font-weight: bold;
@@ -45,6 +47,7 @@ body {
 .active {
     background-color: #e67e22;
 }
+
 
 .loader {
     border: 16px solid #f3f3f3;
@@ -72,27 +75,45 @@ body {
 }
 
 .carrier {
-    background-color: red;
+    /*background-color: red;*/
+    background: url("../images/ship.png");
+    background-size: cover;
 }
 
 .battleship {
-    background-color: green;
+    /*background-color: green;*/
+    background: url("../images/ship1.png");
+    background-size: cover;
 }
 
 .cruiser {
-    background-color: yellow;
+    /*background-color: yellow;*/
+    background: url("../images/ship2.png");
+    background-size: cover;
 }
 
 .submarine {
-    background-color: purple;
+    /*background-color: purple;*/
+    background: url("../images/ship3.png");
+    background-size: cover;
 }
 
 .destroyer {
-    background-color: silver;
+    /*background-color: silver;*/
+    background: url("../images/ship4.png");
+    background-size: cover;
 }
 
 .miss {
-    background-color: black;
+    /*background-color: black;*/
+    background: url("../images/miss.png");
+    background-size: cover;
+}
+
+.boom {
+    /*background-color: black;*/
+    background: url("../images/boom.png");
+    background-size: cover;
 }
 
 .popup {
