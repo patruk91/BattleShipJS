@@ -82,25 +82,25 @@ body {
 
 .battleship {
     /*background-color: green;*/
-    background: url("../images/ship.png");
+    background: url("../images/ship1.png");
     background-size: cover;
 }
 
 .cruiser {
     /*background-color: yellow;*/
-    background: url("../images/ship.png");
+    background: url("../images/ship2.png");
     background-size: cover;
 }
 
 .submarine {
     /*background-color: purple;*/
-    background: url("../images/ship.png");
+    background: url("../images/ship3.png");
     background-size: cover;
 }
 
 .destroyer {
     /*background-color: silver;*/
-    background: url("../images/ship.png");
+    background: url("../images/ship4.png");
     background-size: cover;
 }
 
