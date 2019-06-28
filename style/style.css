@@ -1,6 +1,13 @@
-body {
+html {
     background: url("../images/gameBackground.jpg") no-repeat center fixed;
+    background-size: 100vw 100vh;
+    min-height: 100vh;
+    min-width: 100vw;
+}
+body {
     background-size: cover;
+
+
 }
 .container {
     display: flex;
